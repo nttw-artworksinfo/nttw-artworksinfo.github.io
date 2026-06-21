@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commission Info — Payment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #000000; --text-main: #f5f5f7; --text-sub: #86868b; --border-color: #2d2d2f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0a0a0c; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Kanit', sans-serif; padding: 20px; }
+        
+        /* โครงสร้าง Canvas หลัก */
+        .slide-canvas { width: 100%; max-width: 1024px; aspect-ratio: 16 / 9; background-color: var(--bg-dark); color: var(--text-main); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 60px 80px; box-shadow: 0 30px 100px rgba(0,0,0,0.8); border: 1px solid var(--border-color); border-radius: 16px; }
+        .slide-header { display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 1.5rem; font-weight: 400; }
+        .quick-nav a { text-decoration: none; color: var(--text-sub); font-size: 0.9rem; margin-left: 20px; transition: 0.3s; }
+        .quick-nav a:hover { color: var(--text-main); }
+        
+        /* พื้นที่เนื้อหาหลัก */
+        .main-content-wrapper { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; margin-top: 40px; margin-bottom: auto; width: 100%; }
+        .payment-section { display: flex; flex-direction: column; gap: 30px; max-width: 580px; }
+        .methods-row { display: flex; gap: 12px; flex-wrap: wrap; }
+        
+        /* ดีไซน์ป้ายช่องทางชำระเงิน */
+        .method-badge { background: #121212; border: 1px solid var(--border-color); padding: 12px 20px; border-radius: 10px; font-size: 0.9rem; color: var(--text-main); font-weight: 400; letter-spacing: 0.5px; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.4s ease, box-shadow 0.4s ease; }
+        .method-badge:hover, .method-badge:active { transform: translateY(-6px); border-color: #0066cc; box-shadow: 0 8px 20px rgba(0, 102, 204, 0.25); }
+        .method-badge i { font-size: 1rem; color: var(--text-sub); transition: color 0.3s; }
+        .method-badge:hover i { color: var(--text-main); }
+        
+        .payment-note { font-size: 1.05rem; color: var(--text-sub); font-weight: 200; line-height: 1.6; }
+        .payment-note strong { color: var(--text-main); font-weight: 400; }
+
+        /* กล่องข้อความติดต่อ Gmail */
+        .gmail-contact-widget { background: rgba(18, 18, 20, 0.6); border: 1px solid rgba(255, 69, 58, 0.2); padding: 20px; border-radius: 14px; width: 280px; cursor: pointer; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+            opacity: 0; animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; animation-delay: 0.3s; }
+        .gmail-contact-widget:hover { transform: translateY(-4px); border-color: #ff453a; box-shadow: 0 12px 30px rgba(255, 69, 58, 0.15); }
+        
+        .gmail-icon-box { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 69, 58, 0.1); display: flex; justify-content: center; align-items: center; color: #ff453a; font-size: 1.2rem; }
+        .gmail-text-title { font-size: 0.95rem; font-weight: 400; color: var(--text-main); }
+        .gmail-email-address { font-size: 0.85rem; color: var(--text-sub); font-weight: 300; word-break: break-all; }
+
+        /* ฟุตเตอร์และปุ่มนำทาง */
+        .slide-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .footer-info { font-size: 0.8rem; color: var(--text-sub); }
+        .nav-controls { display: flex; align-items: center; gap: 24px; }
+        .nav-btn { color: var(--text-sub); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .nav-btn:hover { color: var(--text-main); }
+        .nav-btn.disabled { color: #2d2d2f; pointer-events: none; }
+        .slide-counter { color: var(--text-sub); font-size: 0.9rem; font-weight: 300; }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(60px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 768px) {
+            .slide-canvas { aspect-ratio: auto; min-height: 85vh; padding: 40px 24px; }
+            .main-content-wrapper { flex-direction: column; gap: 30px; margin-top: 20px; }
+            .payment-section { max-width: 100%; gap: 20px; }
+            .methods-row { gap: 8px; }
+            .method-badge { padding: 10px 14px; font-size: 0.8rem; }
+            .payment-note { font-size: 0.95rem; }
+            
+            .gmail-contact-widget { width: 100%; flex-direction: row; align-items: center; gap: 16px; padding: 16px; animation: slideInUpMobile 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+            @keyframes slideInUpMobile {
+                from { opacity: 0; transform: translateY(40px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .gmail-contact-widget:hover { transform: scale(1.02); }
+            .footer-info { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-canvas">
+        <div class="slide-header">
+            <div class="section-title">Payment & Policy.</div>
+            <div class="quick-nav">
+                <a href="index.html">Home</a>
+                <a href="Portfolio.html">Portfolio</a>
+            </div>
+        </div>
+
+        <div class="main-content-wrapper">
+            <div class="payment-section">
+                <div class="methods-row">
+                    <div class="method-badge" ontouchstart=""><i class="fas fa-university"></i> K-BANK</div>
+                    <div class="method-badge" ontouchstart=""><i class="fas fa-qrcode"></i> PROMPTPAY</div>
+                    <div class="method-badge" ontouchstart=""><i class="fas fa-wallet"></i> TRUEMONEY</div>
+                    <div class="method-badge" ontouchstart=""><i class="fab fa-paypal"></i> PAYPAL</div>
+                    <div class="method-badge" ontouchstart=""><i class="fas fa-globe"></i> WISE</div>
+                </div>
+                <p class="payment-note">
+                    ต้องชำระมัดจำอย่างน้อย <strong>50%</strong> หรือ <strong>เต็มจำนวน (Full payment)</strong> ก่อนที่ศิลปินจะเริ่มดำเนินงานโปรเจกต์<br><br>
+                    การยกเลิกหลังขั้นตอน Sketch จะได้รับเงินคืน 50% และหากเริ่มขั้นตอนลงสีแล้ว จะไม่สามารถคืนเงินเต็มจำนวนได้ (คืนเฉพาะกรณีพิเศษ 20%)
+                </p>
+            </div>
+            <div class="gmail-contact-widget" onclick="handleGmailContact(event)">
+                <div class="gmail-icon-box">
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div>
+                    <div class="gmail-text-title">สนใจติดต่อ Gmail</div>
+                    <div class="gmail-email-address">gamechi2099@gmail.com</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <span class="footer-info">Thank you for supporting my artwork.</span>
+            <div class="nav-controls">
+                <a href="Commission_Slide4.html" class="nav-btn"><i class="fas fa-chevron-left"></i> Back</a>
+                <span class="slide-counter">05 / 05</span>
+                <a href="#" class="nav-btn disabled">Next <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+    <script>
+        function handleGmailContact(event) {
+            event.preventDefault();
+            
+            const email = 'gamechi2099@gmail.com';
+            const subject = encodeURIComponent('NTTW. Commission Inquiry');
+            
+            // ตรวจสอบว่าเป็นสมาร์ทโฟนหรือแท็บเล็ตหรือไม่
+            const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            
+            if (isMobile) {
+                window.location.href = `mailto:${email}?subject=${subject}`;
+            } else {
+                const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}`;
+                window.open(gmailWebUrl, '_blank');
+            }
+        }
+    </script>
+
+</body>
+</html>

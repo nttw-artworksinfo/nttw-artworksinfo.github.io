@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commission Info — Workflow</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg-dark: #000000; --text-main: #f5f5f7; --text-sub: #86868b; --border-color: #2d2d2f; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #0a0a0c; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Kanit', sans-serif; padding: 20px; }
+        .slide-canvas { width: 100%; max-width: 1024px; aspect-ratio: 16 / 9; background-color: var(--bg-dark); color: var(--text-main); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 60px 80px; box-shadow: 0 30px 100px rgba(0,0,0,0.8); border: 1px solid var(--border-color); border-radius: 16px; }
+        .slide-header { display: flex; justify-content: space-between; align-items: center; }
+        .section-title { font-size: 1.5rem; font-weight: 400; }
+        .quick-nav a { text-decoration: none; color: var(--text-sub); font-size: 0.9rem; margin-left: 20px; }
+        
+        .timeline-container { display: flex; justify-content: space-between; align-items: flex-start; margin-top: 60px; margin-bottom: auto; position: relative; padding: 0 20px; }
+        
+        .timeline-line { position: absolute; top: 20px; left: 60px; right: 60px; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, #0066cc 50%, var(--border-color) 100%); background-size: 200% 100%; animation: pulseLine 4s linear infinite; z-index: 1; }
+        .timeline-node { display: flex; flex-direction: column; align-items: center; text-align: center; width: 200px; z-index: 2; }
+        
+        .node-circle { width: 40px; height: 40px; border-radius: 50%; background: #1c1c1e; border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; font-size: 0.9rem; font-weight: 400; color: var(--text-main); margin-bottom: 16px; transition: 0.3s; position: relative; box-shadow: 0 0 0 rgba(0, 102, 204, 0); animation: nodePulse 3s infinite ease-in-out; }
+        
+        .timeline-node:nth-child(3) .node-circle { animation-delay: 1s; }
+        .timeline-node:nth-child(4) .node-circle { animation-delay: 2s; }
+
+        .node-title { font-size: 1.1rem; font-weight: 400; margin-bottom: 6px; }
+        .node-desc { font-size: 0.85rem; color: var(--text-sub); font-weight: 200; line-height: 1.4; }
+        
+        .slide-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 20px; }
+        .footer-info { font-size: 0.8rem; color: var(--text-sub); }
+        .nav-controls { display: flex; align-items: center; gap: 24px; }
+        .nav-btn { color: var(--text-sub); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 8px; }
+        .nav-btn:hover { color: var(--text-main); }
+        .slide-counter { color: var(--text-sub); font-size: 0.9rem; font-weight: 300; }
+
+        @keyframes pulseLine {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        @keyframes nodePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 102, 204, 0.2); border-color: var(--border-color); }
+            50% { box-shadow: 0 0 12px 4px rgba(0, 102, 204, 0.4); border-color: #0066cc; }
+        }
+
+        @media (max-width: 768px) {
+            .slide-canvas { aspect-ratio: auto; min-height: 85vh; padding: 40px 24px; }
+            .timeline-container { flex-direction: column; gap: 32px; padding: 0; margin-top: 30px; }
+            .timeline-line { left: 20px; top: 0; bottom: 0; width: 1px; height: 100%; background: #2d2d2f; animation: none; }
+            .timeline-node { flex-direction: row; text-align: left; width: 100%; gap: 16px; }
+            .node-circle { margin-bottom: 0; flex-shrink: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-canvas">
+        <div class="slide-header">
+            <div class="section-title">Workflow & Timeline.</div>
+            <div class="quick-nav">
+                <a href="index.html">Home</a>
+                <a href="Portfolio.html">Portfolio</a>
+            </div>
+        </div>
+
+        <div class="timeline-container">
+            <div class="timeline-line"></div>
+            
+            <div class="timeline-node">
+                <div class="node-circle">1</div>
+                <div>
+                    <div class="node-title">Sketch Stage</div>
+                    <div class="node-desc">ส่งแบบร่างแรกเพื่อจัดวางท่าทาง สามารถแก้ไขโครงสร้างใหญ่ได้ 3 ครั้ง</div>
+                </div>
+            </div>
+
+            <div class="timeline-node">
+                <div class="node-circle">2</div>
+                <div>
+                    <div class="node-title">Coloring Stage</div>
+                    <div class="node-desc">ลงสีพื้น แง่มุมแสง และเงา สามารถขอปรับแก้โทนสีจุดเล็กๆ ได้</div>
+                </div>
+            </div>
+
+            <div class="timeline-node">
+                <div class="node-circle">3</div>
+                <div>
+                    <div class="node-title">Final Render</div>
+                    <div class="node-desc">ส่งมอบงานสมบูรณ์ไฟล์ PNG & JPG (300 DPI) ผ่าน Google Drive</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide-footer">
+            <span class="footer-info">* Standard turnaround time: 7 - 14 business days.</span>
+            <div class="nav-controls">
+                <a href="Commission_Slide3.html" class="nav-btn"><i class="fas fa-chevron-left"></i> Back</a>
+                <span class="slide-counter">04 / 05</span>
+                <a href="Commission_Slide5.html" class="nav-btn">Next <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
